@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/User');
+var Source = require('../models/Source');
 var auth = require('../middlewares/info');
 var url = require('url');
 var { transporter, mailOptions } = require('../middlewares/mailer');
@@ -65,7 +66,7 @@ router.post('/login', (req, res, next) => {
         return res.redirect('back');
       }
       req.session.userId = user.id;
-      res.redirect('dashboard');
+      res.redirect('/users/success');
     });
   });
 });
@@ -93,10 +94,10 @@ router.get('/verify', (req, res, next) => {
     }
   });
 });
-//dashboard
-router.get('/dashboard', auth.isUserLogged, (req, res, next) => {
-  res.render('dashboard');
-});
+//dashboard //success
+// router.get('/dashboard', auth.isUserLogged, (req, res, next) => {
+//   res.render('dashboard');
+// });
 //Forgot Password
 router.get('/resetPass', (req, res) => {
   res.render('email');
@@ -140,8 +141,14 @@ router.post('/confirmPass/:id', (req, res, next) => {
 });
 
 //passport
-router.get('/success', auth.isUserLogged, (req, res) => {
-  res.render('dashboard');
+router.get('/success', auth.isUserLogged, (req, res, next) => {
+  Source.aggregate(
+    [{ $group: { _id: req.user.id, amount: { $sum: '$amount' } } }],
+    (err, result) => {
+      if (err) return next(err);
+      res.render('dashboard', { result: result[0].amount });
+    }
+  );
 });
 router.get('/failure', (req, res) => {
   res.render('signup');

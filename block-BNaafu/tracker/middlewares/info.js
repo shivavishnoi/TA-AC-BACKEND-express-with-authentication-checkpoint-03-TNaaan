@@ -1,7 +1,13 @@
 var User = require('../models/User');
 module.exports = {
   isUserLogged: (req, res, next) => {
-    if (req.session && req.session.userId) {
+    let valid = req.session && req.session.userId;
+    //update according to passport success get routes
+    if (!valid) {
+      valid = req.session && req.session.passport.user;
+    }
+
+    if (valid) {
       next();
     } else {
       res.redirect('/users/login');

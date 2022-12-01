@@ -40,14 +40,26 @@ passport.use(
     {
       clientID: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'http://yourdomain:3000/auth/google/callback',
+      callbackURL: 'http://localhost:3000/users/auth/google/callback',
       passReqToCallback: true,
     },
-    function (request, accessToken, refreshToken, profile, done) {
+    function (req, accessToken, refreshToken, profile, done) {
       var profileData = {
-        name: profile.displayName,
+        name: profile._json.name,
+        email: profile._json.email,
+        photo: profile._json.picture,
       };
-      console.log(profile);
+      User.findOne({ email: profile._json.email }, (err, user) => {
+        if (err) return done(err);
+        if (!user) {
+          User.create(profileData, (err, addedUser) => {
+            if (err) return done(err);
+            done(null, addedUser);
+          });
+        } else {
+          done(null, user);
+        }
+      });
     }
   )
 );

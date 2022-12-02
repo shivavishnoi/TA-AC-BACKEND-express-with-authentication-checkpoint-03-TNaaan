@@ -6,7 +6,8 @@ var auth = require('../middlewares/info');
 var url = require('url');
 var { transporter, mailOptions } = require('../middlewares/mailer');
 var passport = require('passport');
-
+var { startDate, lastDate } = require('../middlewares/date');
+const { default: mongoose } = require('mongoose');
 //register & login page
 router.get('/login', (req, res) => {
   res.render('login', { error: req.flash('error') });
@@ -94,10 +95,7 @@ router.get('/verify', (req, res, next) => {
     }
   });
 });
-//dashboard //success
-// router.get('/dashboard', auth.isUserLogged, (req, res, next) => {
-//   res.render('dashboard');
-// });
+
 //Forgot Password
 router.get('/resetPass', (req, res) => {
   res.render('email');
@@ -140,13 +138,22 @@ router.post('/confirmPass/:id', (req, res, next) => {
   );
 });
 
-//passport
+//passport && dashboard page
 router.get('/success', auth.isUserLogged, (req, res, next) => {
+  // console.log(startDate);
   Source.aggregate(
-    [{ $group: { _id: req.user.id, amount: { $sum: '$amount' } } }],
+    [
+      { $match: { userId: mongoose.Types.ObjectId(req.user.id) } },
+      { $match: { date: { $gte: new Date(startDate) } } },
+      { $match: { date: { $lte: new Date(lastDate) } } },
+      { $group: { _id: req.user.id, amount: { $sum: '$amount' } } },
+    ],
     (err, result) => {
+      // console.log(result);
       if (err) return next(err);
-      res.render('dashboard', { result: result[0].amount });
+      if (result) {
+        return res.render('dashboard', { result });
+      }
     }
   );
 });

@@ -48,6 +48,7 @@ passport.use(
         name: profile._json.name,
         email: profile._json.email,
         photo: profile._json.picture,
+        verified: true,
       };
       User.findOne({ email: profile._json.email }, (err, user) => {
         if (err) return done(err);

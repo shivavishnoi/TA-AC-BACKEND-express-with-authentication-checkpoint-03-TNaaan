@@ -20,7 +20,10 @@
   </form>
 </div><br>
 <div>
-  Income This month - <%= result %>
+  Income This month -
+  <% if(result.length > 0){ %>
+  <%= result[0].amount %>
+  <% } %>
 </div><br>
 <a href="/tab/logs">View Detailed Logs</a><br>
 <a href="/logout">Logout</a>

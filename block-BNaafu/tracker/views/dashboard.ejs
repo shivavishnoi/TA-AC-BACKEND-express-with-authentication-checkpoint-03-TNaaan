@@ -1,0 +1,32 @@
+<%- include("partials/header"); %>
+<!-- <h1>welcome <%= user.name %></h1> -->
+<br>
+<div>
+  Add Income Details
+  <form action="/tab/sources/add/<%= user.id%>" method="POST">
+    Source: <input type="text" placeholder="Source" name="source">
+    Amount: <input type="text" placeholder="Amount" name="amount">
+    Date: <input type="date" name="date">
+    <button type="submit">Add Source</button>
+  </form>
+</div><br>
+<div>
+  Add Expense Details
+  <form action="/tab/expenses/add/<%= user.id%>" method="POST">
+    Category: <input type="text" placeholder="Category" name="expense">
+    Amount: <input type="text" placeholder="Amount" name="amount">
+    Date: <input type="date" name="date">
+    <button type="submit">Add Expense</button>
+  </form>
+</div><br>
+<div>
+  Income This month -
+  <% if(result.length > 0){ %>
+  <%= result[0].amount %>
+  <% } %>
+</div><br>
+<a href="/tab/logs">View Detailed Logs</a><br>
+<a href="/logout">Logout</a>
+</body>
+
+</html>

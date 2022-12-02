@@ -1,0 +1,15 @@
+<%- include("partials/header"); %>
+<% if(error){ %>
+<p><%= error %></p>
+<% } %>
+<form action="/users/login" method="POST">
+  Email: <input type="email" placeholder="Email" name="email">
+  Password: <input type="password" placeholder="Password" name="password">
+  <button type="submit">LogIn</button><br><br>
+  <a href="/users/resetPass">Forgot Password?</a><br><br>
+  <a href="/users/auth/github">Login Using Github</a><br><br>
+  <a href="/users/auth/google">Login Using Google</a>
+</form>
+</body>
+
+</html>
